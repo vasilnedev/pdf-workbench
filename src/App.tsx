@@ -1,11 +1,17 @@
-import { Button, HStack } from "@chakra-ui/react"
+import { Theme, Box } from "@chakra-ui/react"
 
 const App = () => {
   return (
-    <HStack>
-      <Button>Click me</Button>
-      <Button>Click me</Button>
-    </HStack>
+    <Theme appearance="dark">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+      >
+        <h1>Hello, PDF Workbench!</h1>
+      </Box>
+    </Theme>
   )
 }
 
