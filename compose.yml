@@ -2,7 +2,8 @@
 # Sample usage: docker compose up -d
 
 volumes:
-  bim-app-vol:
+  minio-vol:
+  main-app-vol:
     driver: local
     driver_opts:
       type: none
@@ -24,5 +25,32 @@ services:
 
     volumes:
     - type: volume
-      source: bim-app-vol
+      source: main-app-vol
       target: /usr/src/app
+
+  minio:
+    image: minio/minio
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+    environment:
+      - MINIO_ROOT_USER=myminioadmin
+      - MINIO_ROOT_PASSWORD=myminioadmin
+
+    command: minio server /data --console-address ":9001"
+
+    ports:
+      - published: 9000
+        target: 9000
+      - published: 9001
+        target: 9001
+
+    volumes:
+    - type: volume
+      source: minio-vol
+      target: /data

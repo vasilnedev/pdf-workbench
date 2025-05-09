@@ -18,16 +18,14 @@ const options = {
   standardFontDataUrl: '/standard_fonts/',
 }
 
-const resizeObserverOptions = {}
+export default function PdfDocument({ file, setPlainPdfText }: { 
+  file: string, 
+  setPlainPdfText: (text: string) => void 
+}){
 
-const maxWidth = 2000
+  const resizeObserverOptions = {}
+  const maxWidth = 2000
 
-let allPagesReady = false
-
-type PDFFile = string | File | null
-
-export default function PdfDocument({ setPlainText }: { setPlainText: (text: string) => void }) {
-  const [file ] = useState<PDFFile>('./sample-01.pdf')
   const [numPages, setNumPages] = useState<number>()
   const [containerRef, setContainerRef] = useState<HTMLElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number>()
@@ -47,7 +45,7 @@ export default function PdfDocument({ setPlainText }: { setPlainText: (text: str
   }
 
   async function onPageLoadSuccess(page: PDFPageProxy): Promise<void> {
-    if (allPagesReady) return
+    
     const textContent = await page.getTextContent()
     let pageText = '' 
     textContent.items.map( (item: any) => item.str ).forEach( (text: string) => {
@@ -66,11 +64,12 @@ export default function PdfDocument({ setPlainText }: { setPlainText: (text: str
     /* 
       Sort the plainTextMap by key and join the values into a single string
     */
-    let documentText = ''
-    const keysReady = Array.from( plainTextMap.keys() ).sort( (a, b) => a > b ? 1 : -1 )
-    allPagesReady = keysReady.length === numPages
-    keysReady.forEach( key => documentText += plainTextMap.get(key) + '\n')
-    setPlainText( documentText )
+    if( numPages && plainTextMap.size == numPages ) {
+      let plainPdfText = ''
+      const keysReady = Array.from( plainTextMap.keys() ).sort( (a, b) => a > b ? 1 : -1 )
+      keysReady.forEach( key => plainPdfText += plainTextMap.get(key) + '\n')
+      setPlainPdfText( plainPdfText )
+    }
   }
 
   return (
