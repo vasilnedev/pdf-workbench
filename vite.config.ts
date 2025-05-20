@@ -31,7 +31,8 @@ export default defineConfig({
     allowedHosts: ['localhost','bim-app.laptop'], // allow access from localhost and the specified hostname
     port: 5501,
     proxy: {
-      '/pdf-documents': 'http://minio:9000'
+      '/pdf-documents': 'http://minio:9000',
+      '/txt-documents': 'http://minio:9000'
     }
   }
 })

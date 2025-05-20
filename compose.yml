@@ -3,6 +3,7 @@
 
 volumes:
   minio-vol:
+  neo4j-vol:
   main-app-vol:
     driver: local
     driver_opts:
@@ -53,4 +54,23 @@ services:
     volumes:
     - type: volume
       source: minio-vol
+      target: /data
+
+  neo4j:
+    image: neo4j
+    restart: always
+    
+    environment:
+    - NEO4J_AUTH=none
+    - NEO4J_PLUGINS=["apoc","graph-data-science"]
+
+    ports:
+    - published: 7474
+      target: 7474
+    - published: 7687
+      target: 7687
+    
+    volumes:
+    - type: volume
+      source: neo4j-vol
       target: /data

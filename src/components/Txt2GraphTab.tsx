@@ -1,10 +1,14 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import TxtDocument from './TxtDocument'
+import { TxtDocument , JSONDocument } from './TxtDocuments'
+import Txt2GraphMenu from './Txt2GraphMenu'
 
-export default function Txt2GraphTab( { plainText, setPlainText }: 
+export default function Txt2GraphTab( { pdfFileName, plainText, setPlainText , graphJSON, setGraphJSON }: 
   {  
+    pdfFileName: string,
     plainText: string, 
     setPlainText: (text: string) => void 
+    graphJSON: string,
+    setGraphJSON: (json: string) => void
   }){
 
   return (
@@ -16,14 +20,20 @@ export default function Txt2GraphTab( { plainText, setPlainText }:
     margin={0}
     height={'calc(100vh - 60px)'}
     >
-      <GridItem colSpan={2} padding={2} backgroundColor="gray.700">
-        <p>Menu bar</p>
+      <GridItem colSpan={2} padding={1} backgroundColor="gray.700">
+        <Txt2GraphMenu
+          pdfFileName={ pdfFileName }
+          plainText={ plainText }
+          setPlainText={ setPlainText }
+          graphJSON={ graphJSON }
+          setGraphJSON={ setGraphJSON }
+        />
       </GridItem>
       <GridItem padding={0} backgroundColor="gray.700" overflow={'auto'}>
         <TxtDocument plainText={ plainText } setPlainText={ setPlainText } />
       </GridItem>
-      <GridItem padding={4} backgroundColor="gray.700" overflow={'auto'}>
-        <p>Graph Viewer</p>
+      <GridItem padding={0} backgroundColor="gray.700" overflow={'auto'}>
+        <JSONDocument graphJSON={ graphJSON } setGraphJSON={ setGraphJSON } />
       </GridItem>
     </Grid>
   )

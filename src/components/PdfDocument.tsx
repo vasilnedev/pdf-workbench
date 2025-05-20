@@ -3,6 +3,8 @@ import { useResizeObserver } from '@wojtekmaj/react-hooks'
 import { pdfjs, Document, Page } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
+import { pdfFolder } from './constants'
+import { toaster } from "@/components/ui/toaster"
 
 import './PdfDocument.css'
 
@@ -18,9 +20,10 @@ const options = {
   standardFontDataUrl: '/standard_fonts/',
 }
 
-export default function PdfDocument({ file, setPlainPdfText }: { 
-  file: string, 
-  setPlainPdfText: (text: string) => void 
+export default function PdfDocument({ pdfFileName, renderPdf, setPlainTextFromPdf }: { 
+  pdfFileName: string, 
+  renderPdf: boolean,
+  setPlainTextFromPdf: (text: string) => void 
 }){
 
   const resizeObserverOptions = {}
@@ -68,19 +71,27 @@ export default function PdfDocument({ file, setPlainPdfText }: {
       let plainPdfText = ''
       const keysReady = Array.from( plainTextMap.keys() ).sort( (a, b) => a > b ? 1 : -1 )
       keysReady.forEach( key => plainPdfText += plainTextMap.get(key) + '\n')
-      setPlainPdfText( plainPdfText )
+      setPlainTextFromPdf( plainPdfText )
+      toaster.create({
+        title: `${ pdfFileName } render success!`,
+        type: 'success',
+      })
     }
   }
 
   return (
     <div className="PdfDocument__container__document" ref={setContainerRef}>
-      <Document file={file} onLoadSuccess={onDocumentLoadSuccess} options={options}>
-        {Array.from(new Array(numPages), (_el, index) => (
+      <Document 
+        file={ (renderPdf && pdfFileName ) ? pdfFolder + pdfFileName : null } 
+        onLoadSuccess={onDocumentLoadSuccess} 
+        options={options}
+      >
+        {Array.from(new Array( numPages ), (_el, index) => (
           <Page
-            key={`page_${index + 1}`}
-            pageNumber={index + 1}
-            width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
-            onLoadSuccess={onPageLoadSuccess}
+            key={ `page_${index + 1}` }
+            pageNumber={ index + 1 }
+            width={ containerWidth ? Math.min( containerWidth, maxWidth) : maxWidth}
+            onLoadSuccess={ onPageLoadSuccess }
           />
         ))}
       </Document>
