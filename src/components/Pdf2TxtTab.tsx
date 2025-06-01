@@ -57,7 +57,7 @@ export default function Pdf2TxtTab( { pdfFileName, setPdfFileName , plainText, s
             <Textarea placeholder="Replace text" value={replaceText} onChange={(e) => setReplaceText(e.target.value)}/>
           </VStack>
           <VStack>
-            <Button onClick={handleReplaceAll}>Replace<br />All</Button>
+            <Button variant='outline' onClick={handleReplaceAll}>Replace<br />All</Button>
           </VStack>
         </HStack>
       </GridItem>
