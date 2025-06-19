@@ -8,6 +8,8 @@ export type NodeLablel =
   'REQUIREMENT' |
   'GUIDANCE' | 
   'REFERENCE' |
+  'DIAGRAM' |
+  'TABLE' |
   'RECORD'
 
 export type LinkLabel =
@@ -64,6 +66,8 @@ export const graphSchema: JSONSchema7 = {
         "REQUIREMENT",
         "GUIDANCE",
         "REFERENCE",
+        "DIAGRAM",
+        "TABLE",
         "RECORD"
       ]
     },

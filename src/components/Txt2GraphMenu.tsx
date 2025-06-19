@@ -76,28 +76,43 @@ export default function Pdf2TxtMenu({ pdfFileName, plainText , setPlainText, gra
       links:[] as Link[]
     }
 
+    // Checks if a paragraph is a single sentence, allowing for enumerated prefixes
+    function isSingleSentence( paragraph : string ): boolean {
+      // Remove leading enumeration (e.g., "1.", "1.2.", "A.1.3.", etc.)
+      const trimmed = paragraph.trim().replace(/^[A-Za-z0-9]+(\.[A-Za-z0-9]+)*\.\s*/, '');
+      // Split by sentence-ending punctuation followed by space or end of string
+      const sentences = trimmed.split(/(?<=[\\n.!?])\s+/).filter(s => s.length > 0);
+      return sentences.length === 1
+    }
+
     let id = 1
-    for( const para of plainText.split('\n\n') ) {
-      const trim_para = para.trim()
-      if( trim_para.length > 0){
+    let thisParentId = 1
+    let nextParentId = 1
+
+    for( const para of plainText.split(/\n\s*\n/) ) {
+      if( para.trim().length > 0){
         let labels: NodeLablel[] = ['INFORMATION'] // default value
         if( id == 1){ labels=['DOCUMENT'] }
+        else if( para.startsWith('BS ') || para.startsWith('BSI ') ){ labels=['REFERENCE'] }
+        else if( para.toLowerCase().startsWith('diagram ') ){ labels=['DIAGRAM'] }
+        else if( para.toLowerCase().startsWith('table ') ){ labels=['TABLE'] }
+        else if( isSingleSentence( para ) ){ labels=['SECTION']; thisParentId = 1; nextParentId = id }
         else if( para.includes(' shall ') ){ labels=['REQUIREMENT'] }
         else if( para.includes(' should ') ){ labels=['GUIDANCE'] }
-        else if( para.startsWith('[') ){ labels=['REFERENCE'] }
         graph.nodes.push( {
           node_id:id,
           pdfFileName,
           labels,
-          text: para
+          text: para.trim()
         } )
         if( id > 1 ){
           graph.links.push({
-            from:1,
+            from: thisParentId,
             to:id,
             pdfFileName,
             label: 'HAS'
           })
+          thisParentId = nextParentId
         }
         id++
       } 
