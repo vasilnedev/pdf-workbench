@@ -1,7 +1,7 @@
 import { Button, HStack, Text } from '@chakra-ui/react'
 import { txtFolder } from './constants'
 import { toaster } from "@/components/ui/toaster"
-import { graphSchema, Graph, Node, Link, DocLablel } from './Graph.d'
+import { graphSchema, Graph, Node, Link, NodeLablel } from './Graph.d'
 import Validator from 'jsonschema'
 import exportGraphData from './exportGraphData'
 
@@ -78,16 +78,17 @@ export default function Pdf2TxtMenu({ pdfFileName, plainText , setPlainText, gra
 
     let id = 1
     for( const para of plainText.split('\n\n') ) {
-      if( para.trim().length != 0){
-        let label: DocLablel = 'INFO'
-        if( id == 1){ label='DOCUMENT' }
-        else if( para.includes(' shall ') ){ label='REQUIREMENT' }
-        else if( para.includes(' should ') ){ label='GUIDANCE' }
-        else if( para.startsWith('[') ){ label='REFERENCE' }
+      const trim_para = para.trim()
+      if( trim_para.length > 0){
+        let labels: NodeLablel[] = ['INFORMATION'] // default value
+        if( id == 1){ labels=['DOCUMENT'] }
+        else if( para.includes(' shall ') ){ labels=['REQUIREMENT'] }
+        else if( para.includes(' should ') ){ labels=['GUIDANCE'] }
+        else if( para.startsWith('[') ){ labels=['REFERENCE'] }
         graph.nodes.push( {
           node_id:id,
           pdfFileName,
-          label,
+          labels,
           text: para
         } )
         if( id > 1 ){

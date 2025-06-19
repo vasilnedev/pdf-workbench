@@ -1,23 +1,24 @@
 import { JSONSchema7 } from 'json-schema'
 
-export type DocLablel = 
+export type NodeLablel = 
   'DOCUMENT' |
-  'ISSUER' |
   'SECTION' | 
-  'INFO' | 
-  'DEFINITION' | 
-  'REQUIREMENT' | 
+  'INFORMATION' | 
+  'DEFINITION' |
+  'REQUIREMENT' |
   'GUIDANCE' | 
-  'REFERENCE'
+  'REFERENCE' |
+  'RECORD'
 
 export type LinkLabel =
   'HAS' |
-  'ISSUED_BY'
+  'ALIGNS_WITH' |
+  'REFERS_TO'
 
 export type Node = {
   node_id: number
   pdfFileName: string
-  label: DocLablel
+  labels: NodeLablel[]
   text: string
 }
 
@@ -52,9 +53,23 @@ export const graphSchema: JSONSchema7 = {
     }
   },
   "$defs": {
+    "nodeLabels": {
+      "type": "string",
+      "description": "The label of the node",
+      "enum": [
+        "DOCUMENT",
+        "SECTION",
+        "INFORMATION",
+        "DEFINITION",
+        "REQUIREMENT",
+        "GUIDANCE",
+        "REFERENCE",
+        "RECORD"
+      ]
+    },
     "nodes": {
       "type": "object",
-      "required": [ "node_id", "pdfFileName", "label", "text" ],
+      "required": [ "node_id", "pdfFileName", "labels", "text" ],
       "properties": {
         "node_id": {
           "type": "integer",
@@ -64,19 +79,10 @@ export const graphSchema: JSONSchema7 = {
           "type": "string",
           "description": "The name of the PDF file"
         },
-        "label": {
-          "type": "string",
-          "description": "The label of the node",
-          "enum": [
-            "DOCUMENT",
-            "ISSUER",
-            "SECTION",
-            "INFO",
-            "DEFINITION",
-            "REQUIREMENT",
-            "GUIDANCE",
-            "REFERENCE"
-          ]
+        "labels": {
+          "type": "array",
+          "description": "Labels of a node",
+          "items": { "$ref": "#/$defs/nodeLabels" }
         },
         "text": {
           "type": "string",
@@ -105,6 +111,7 @@ export const graphSchema: JSONSchema7 = {
           "description": "The label of the link",
           "enum": [
             "HAS",
+            "ALIGNS_WITH",
             "ISSUED_BY"
           ] 
         }

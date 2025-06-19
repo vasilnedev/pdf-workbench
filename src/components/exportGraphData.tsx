@@ -15,10 +15,10 @@ export default async function exportGraphData( json: string ) {
 
     // Create nodes    
     for (const node of graphData.nodes) {
-      const { label } = node;
+      const { labels } = node
       await session.run(
         `
-        MERGE (n:${label} {node_id: $node_id, pdfFileName: $pdfFileName})
+        MERGE (n:${labels.join(':')} {node_id: $node_id, pdfFileName: $pdfFileName})
         SET n.text = $text
         `,
         node
@@ -27,7 +27,7 @@ export default async function exportGraphData( json: string ) {
 
     // Create relationships
     for (const link of graphData.links) {
-      const { label } = link;
+      const { label } = link
       await session.run(
         `
         MATCH (a {node_id: $from, pdfFileName: $pdfFileName}), (b {node_id: $to, pdfFileName: $pdfFileName})
