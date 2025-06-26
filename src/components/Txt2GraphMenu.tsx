@@ -3,7 +3,7 @@ import { txtFolder } from './constants'
 import { toaster } from "@/components/ui/toaster"
 import { graphSchema, Graph, Node, Link, NodeLablel } from './Graph.d'
 import Validator from 'jsonschema'
-import exportGraphData from './exportGraphData'
+import { exportGraphData } from './graphData'
 
 export default function Pdf2TxtMenu({ pdfFileName, plainText , setPlainText, graphJSON, setGraphJSON }:{
   pdfFileName: string,
